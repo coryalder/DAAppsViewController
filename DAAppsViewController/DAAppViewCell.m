@@ -305,7 +305,7 @@ static NSNumberFormatter *_decimalNumberFormatter = nil;
             UIImage *iconImage = [UIImage imageWithData:iconData];
             if (iconImage) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    CGSize finalSize = _iconView.bounds.size;
+                    CGSize finalSize = self.iconView.bounds.size;
                     UIGraphicsBeginImageContextWithOptions(finalSize, YES, 0.0f);
                     [iconImage drawInRect:(CGRect) {
                         .size = finalSize

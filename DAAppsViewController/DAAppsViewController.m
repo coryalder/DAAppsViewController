@@ -13,12 +13,11 @@
 #define DARK_BACKGROUND_COLOR   [UIColor colorWithWhite:235.0f/255.0f alpha:1.0f]
 #define LIGHT_BACKGROUND_COLOR  [UIColor colorWithWhite:245.0f/255.0f alpha:1.0f]
 
-@interface DAAppsViewController () <SKStoreProductViewControllerDelegate> {
-    BOOL _isLoading;
-    NSString *_defaultTitle;
-}
+@interface DAAppsViewController () <SKStoreProductViewControllerDelegate>
 
 @property (nonatomic, copy) NSArray *appsArray;
+@property (nonatomic) BOOL isLoading;
+@property (nonatomic, strong) NSString *defaultTitle;
 
 - (void)presentAppObjectAtIndexPath:(NSIndexPath *)indexPath;
 
@@ -136,9 +135,9 @@
     _defaultTitle = defaultTitle;
     [self updateTitle];
     [self loadRequestPath:path withCompletion:^(NSArray *results, NSError *error) {
-        _isLoading = NO;
+        self.isLoading = NO;
         if (error) {
-            _defaultTitle = NSLocalizedString(@"Error",);
+            self.defaultTitle = NSLocalizedString(@"Error",);
             if (block) {
                 block(NO, error);
             }
@@ -149,7 +148,7 @@
                 if (isArtistWrapper) {
                     NSString *artistName = [result objectForKey:@"artistName"];
                     if (artistName) {
-                        _defaultTitle = artistName;
+                        self.defaultTitle = artistName;
                     }
                 }
                 DAAppObject *appObject = [[DAAppObject alloc] initWithResult:result];
