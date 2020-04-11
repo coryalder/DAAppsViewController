@@ -286,7 +286,27 @@
     } else {
         NSString *appUrlString = [NSString stringWithFormat:@"itms-apps://itunes.apple.com/app/id%ld?mt=8", (long)appObject.appId];
         NSURL *appURL = [[NSURL alloc] initWithString:appUrlString];
-        [[UIApplication sharedApplication] openURL:appURL];
+
+        void (^completion)(BOOL success) = ^void(BOOL success) {};
+        NSDictionary<NSString *, id> *options = [NSDictionary dictionary];
+        
+        SEL sharedAppSelector = NSSelectorFromString(@"sharedApplication");
+        
+        // support app extensions
+        if ([UIApplication respondsToSelector:sharedAppSelector]) {
+            UIApplication *app = [UIApplication performSelector:sharedAppSelector];
+            SEL openURLSelector = NSSelectorFromString(@"openURL:options:completionHandler:");
+
+            NSMethodSignature *sig = [NSMethodSignature methodSignatureForSelector:openURLSelector];
+            NSInvocation *inv = [NSInvocation invocationWithMethodSignature:sig];
+            [inv setTarget:app];
+            [inv setArgument:&appURL atIndex:2];
+            [inv setArgument:&options atIndex:3];
+            [inv setArgument:&completion atIndex:4];
+            [inv invoke];
+        } else {
+            [self.extensionContext openURL:appURL completionHandler:completion];
+        }
     }
 }
 
